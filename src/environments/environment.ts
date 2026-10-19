@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://backendhamada.vercel.app/api'
+  apiUrl: 'https://backhealth.vercel.app/api',
 };

@@ -41,9 +41,7 @@ export class ApiService {
     return request;
   }
 
-  /**
-   * Generic POST Request
-   */
+  
   post<T>(endpoint: string, body: any): Observable<T> {
     this.requestGeneration++;
     return this.http.post<T>(`${this.baseUrl}/${endpoint}`, body);
