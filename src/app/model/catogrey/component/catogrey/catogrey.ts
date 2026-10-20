@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CategoryService } from '../../../../core/services/category.service';
 import { Category } from '../../../../core/models/models';
@@ -9,11 +9,12 @@ import { Category } from '../../../../core/models/models';
   templateUrl: './catogrey.html',
   styleUrl: './catogrey.css',
 })
-export class Catogrey implements OnInit {
+export class Catogrey implements OnInit, OnDestroy {
   categories: Category[] = [];
   loading = true;
   searchQuery = '';
   selectedCategoryId = 'all';
+  private loadingTimeout?: ReturnType<typeof setTimeout>;
 
   get filteredCategories(): Category[] {
     const query = this.searchQuery.trim().toLocaleLowerCase('ar');
@@ -67,23 +68,46 @@ export class Catogrey implements OnInit {
 
   constructor(
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loading = true;
+    this.loadingTimeout = setTimeout(() => {
+      this.loading = false;
+      this.loadingTimeout = undefined;
+      this.cdr.detectChanges();
+    }, 1000);
+
     this.categoryService.getCategories().subscribe({
       next: (res) => {
-        this.loading = false;
-        if (res.success && res.data) {
+        if (res.success && Array.isArray(res.data)) {
           this.categories = res.data;
         }
+        this.finishLoading();
+        this.cdr.detectChanges();
       },
       error: (err) => {
-        this.loading = false;
+        this.finishLoading();
         console.error('Error fetching categories:', err);
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.loadingTimeout) {
+      clearTimeout(this.loadingTimeout);
+    }
+  }
+
+  private finishLoading(): void {
+    this.loading = false;
+    if (this.loadingTimeout) {
+      clearTimeout(this.loadingTimeout);
+      this.loadingTimeout = undefined;
+    }
   }
 
   selectCategory(categoryId: string): void {
