@@ -21,8 +21,8 @@ export class Home implements OnInit {
     description:
       'اكتشف مجموعة متكاملة من الأجهزة والمستلزمات الطبية عالية الجودة، مع خدمة توصيل سريعة وتجربة شراء سهلة وآمنة.',
     buttonText: 'تسوق الآن',
-    image:
-      'https://images.unsplash.com/photo-1584362917165-526a968579e8?auto=format&fit=crop&w=900&q=85'
+       image:
+      '../../../../../assets/مستلزمات طبية بتصميم أخضر نظيف.png',
   };
 
   services = [
