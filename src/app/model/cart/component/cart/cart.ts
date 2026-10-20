@@ -13,6 +13,36 @@ import { CartItem, Order } from '../../../../core/models/models';
   styleUrl: './cart.css',
 })
 export class Cart implements OnInit {
+  readonly egyptianCities = [
+    'القاهرة',
+    'الجيزة',
+    'الإسكندرية',
+    'بورسعيد',
+    'السويس',
+    'الإسماعيلية',
+    'دمياط',
+    'طنطا',
+    'المنصورة',
+    'الزقازيق',
+    'بنها',
+    'شبين الكوم',
+    'كفر الشيخ',
+    'دمنهور',
+    'الفيوم',
+    'بني سويف',
+    'المنيا',
+    'أسيوط',
+    'سوهاج',
+    'قنا',
+    'الأقصر',
+    'أسوان',
+    'العريش',
+    'مرسى مطروح',
+    'الغردقة',
+    'الخارجة',
+    'طور سيناء',
+  ];
+  citySearch = '';
   currentStep = 1;
   submittingOrder = false;
   orderCompleted = false;
@@ -26,7 +56,7 @@ export class Cart implements OnInit {
     email: '',
     phone: '',
     hospitalOrClinic: '',
-    city: 'الرياض',
+    city: 'القاهرة',
     address: '',
     postalCode: '',
     notes: '',
@@ -49,11 +79,20 @@ export class Cart implements OnInit {
       this.shippingData.phone = user.phone || '';
       this.shippingData.hospitalOrClinic = user.organization || '';
       if (user.address) {
-        this.shippingData.city = user.address.city || 'الرياض';
+        const savedCity = user.address.city;
+        this.shippingData.city =
+          savedCity && this.egyptianCities.includes(savedCity) ? savedCity : 'القاهرة';
         this.shippingData.address = user.address.street || '';
         this.shippingData.postalCode = user.address.postalCode || '';
       }
     }
+  }
+
+  get filteredEgyptianCities(): string[] {
+    const query = this.citySearch.trim();
+    return query
+      ? this.egyptianCities.filter((city) => city.includes(query))
+      : this.egyptianCities;
   }
 
   get cartItems(): any[] {
@@ -134,8 +173,8 @@ export class Cart implements OnInit {
     if (this.shippingData.hospitalOrClinic.trim().length > 150) {
       return 'اسم المنشأة يجب ألا يتجاوز 150 حرفاً';
     }
-    if (city.length < 2 || city.length > 100) {
-      return 'يرجى إدخال مدينة صحيحة';
+    if (!this.egyptianCities.includes(city)) {
+      return 'يرجى اختيار مدينة من مدن مصر';
     }
     if (address.length < 5 || address.length > 300) {
       return 'العنوان يجب أن يكون بين 5 و300 حرف';

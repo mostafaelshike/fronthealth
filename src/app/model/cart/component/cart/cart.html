@@ -428,16 +428,20 @@
 
           <label>المدينة</label>
 
-          <select [(ngModel)]="shippingData.city" required>
+          <input
+            type="search"
+            [(ngModel)]="citySearch"
+            placeholder="ابحث عن المدينة"
+            aria-label="ابحث عن المدينة">
+
+          <select [(ngModel)]="shippingData.city" (ngModelChange)="citySearch = ''" required>
 
             <option value="">اختر المدينة</option>
-            <option value="الرياض">الرياض</option>
-            <option value="جدة">جدة</option>
-            <option value="الدمام">الدمام</option>
-            <option value="مكة">مكة</option>
-            <option value="المدينة المنورة">المدينة المنورة</option>
+            <option *ngFor="let city of filteredEgyptianCities" [value]="city">{{ city }}</option>
 
           </select>
+
+          <small *ngIf="citySearch && filteredEgyptianCities.length === 0">لا توجد مدينة بهذا الاسم</small>
 
         </div>
 
